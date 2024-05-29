@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:habit_tracker/components/my_alert_box.dart';
 import 'package:habit_tracker/components/habit_tile.dart';
 import 'package:habit_tracker/components/my_fab.dart';
+import 'package:habit_tracker/data/habit_database.dart';
+import 'package:hive/hive.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,16 +13,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  //todays list
-  List todayHabitList = [
-    ['Morning Walk', false],
-    ['Morning Prayer', true],
-  ];
+  HabitDatabase db = HabitDatabase();
+  final _myBox = Hive.box('habit-tracker-database');
+
+  @override
+  void initState() {
+    // 1st time open? => use default databse
+    if (_myBox.get('current_habit_list') == null) {
+      db.createDefaultData();
+    } else {
+      db.loadData();
+    }
+    db.updateData();
+
+    super.initState();
+  }
 
   void checkBoxTapped(bool? value, int index) {
     setState(() {
-      todayHabitList[index][1] = value!;
+      db.todayHabitList[index][1] = value!;
     });
+    db.updateData();
   }
 
   final _newHabitController = TextEditingController();
@@ -39,10 +52,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void saveNewHabit() {
     setState(() {
-      todayHabitList.add([_newHabitController.text, false]);
+      db.todayHabitList.add([_newHabitController.text, false]);
     });
     _newHabitController.clear();
     Navigator.of(context).pop();
+    db.updateData();
   }
 
   void cancelAlertDialog() {
@@ -55,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
         context: context,
         builder: (context) {
           return MyAlertBox(
-              hintText: todayHabitList[index][0], // current name of habit
+              hintText: db.todayHabitList[index][0], // current name of habit
               textController: _newHabitController,
               onSave: () => saveExistingHabit(index),
               onCancel: cancelAlertDialog);
@@ -64,16 +78,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void saveExistingHabit(int index) {
     setState(() {
-      todayHabitList[index][0] = _newHabitController.text;
+      db.todayHabitList[index][0] = _newHabitController.text;
     });
     _newHabitController.clear();
     Navigator.of(context).pop();
+    db.updateData();
   }
 
   void deleteHabit(int index) {
     setState(() {
-      todayHabitList.removeAt(index);
+      db.todayHabitList.removeAt(index);
     });
+    db.updateData();
   }
 
   @override
@@ -81,13 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: ListView.builder(
-        itemCount: todayHabitList.length,
+        itemCount: db.todayHabitList.length,
         itemBuilder: (context, index) {
           return HabitTile(
             deleteTapped: (context) => deleteHabit(index),
             settingsTapped: (context) => editHabitName(index),
-            habitName: todayHabitList[index][0],
-            habitCompleted: todayHabitList[index][1],
+            habitName: db.todayHabitList[index][0],
+            habitCompleted: db.todayHabitList[index][1],
             onChanged: (value) => checkBoxTapped(value, index),
           );
         },

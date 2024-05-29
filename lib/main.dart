@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:habit_tracker/screens/home_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  // initialize hive
+  await Hive.initFlutter();
+
+  // open hive box
+  await Hive.openBox('habit-tracker-database');
   runApp(const MyApp());
 }
 
