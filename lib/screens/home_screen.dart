@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:habit_tracker/components/monthly_summary.dart';
 import 'package:habit_tracker/components/my_alert_box.dart';
 import 'package:habit_tracker/components/habit_tile.dart';
 import 'package:habit_tracker/components/my_fab.dart';
@@ -96,17 +97,27 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: ListView.builder(
-        itemCount: db.todayHabitList.length,
-        itemBuilder: (context, index) {
-          return HabitTile(
-            deleteTapped: (context) => deleteHabit(index),
-            settingsTapped: (context) => editHabitName(index),
-            habitName: db.todayHabitList[index][0],
-            habitCompleted: db.todayHabitList[index][1],
-            onChanged: (value) => checkBoxTapped(value, index),
-          );
-        },
+      body: ListView(
+        children: [
+          // monthly summary heatmap
+          MonthkySummary(datasets: db.heatMapDataSet , startDate: _myBox.get("START_DATE")),
+
+          // habits lists
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: db.todayHabitList.length,
+            itemBuilder: (context, index) {
+              return HabitTile(
+                deleteTapped: (context) => deleteHabit(index),
+                settingsTapped: (context) => editHabitName(index),
+                habitName: db.todayHabitList[index][0],
+                habitCompleted: db.todayHabitList[index][1],
+                onChanged: (value) => checkBoxTapped(value, index),
+              );
+            },
+          ),
+        ],
       ),
       floatingActionButton: MyFloatingActionButton(
         onPressed: createNewHabit,
