@@ -96,28 +96,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
-      body: ListView(
-        children: [
-          // monthly summary heatmap
-          MonthkySummary(datasets: db.heatMapDataSet , startDate: _myBox.get("START_DATE")),
-
-          // habits lists
-          ListView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: db.todayHabitList.length,
-            itemBuilder: (context, index) {
-              return HabitTile(
-                deleteTapped: (context) => deleteHabit(index),
-                settingsTapped: (context) => editHabitName(index),
-                habitName: db.todayHabitList[index][0],
-                habitCompleted: db.todayHabitList[index][1],
-                onChanged: (value) => checkBoxTapped(value, index),
-              );
-            },
-          ),
-        ],
+      backgroundColor:Theme.of(context).colorScheme.primary,
+      body: SafeArea(
+        child: ListView(
+          children: [
+            // monthly summary heatmap
+            MonthkySummary(datasets: db.heatMapDataSet , startDate: _myBox.get("START_DATE")),
+        
+            // habits lists
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: db.todayHabitList.length,
+              itemBuilder: (context, index) {
+                return HabitTile(
+                  deleteTapped: (context) => deleteHabit(index),
+                  settingsTapped: (context) => editHabitName(index),
+                  habitName: db.todayHabitList[index][0],
+                  habitCompleted: db.todayHabitList[index][1],
+                  onChanged: (value) => checkBoxTapped(value, index),
+                );
+              },
+            ),
+          ],
+        ),
       ),
       floatingActionButton: MyFloatingActionButton(
         onPressed: createNewHabit,

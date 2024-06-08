@@ -60,14 +60,12 @@ class HabitDatabase {
   }
 
   void loadHeatMap() {
-    print('loading');
     DateTime startDate = createDateTimeObject(_myBox.get("START_DATE"));
     int daysInBetween = DateTime.now().difference(startDate).inDays;
 
-    print(daysInBetween);
     for (int i = 0; i <=daysInBetween; i++) {
       String yyyymmdd =
-          ConvertDateTimeToString(startDate.add(Duration(days: i)));
+          convertDateTimeToString(startDate.add(Duration(days: i)));
 
       double strengthAsPercent =
           double.parse(_myBox.get("PERCENTAGE_SUMMARY_$yyyymmdd") ?? "0.0");
@@ -83,9 +81,7 @@ class HabitDatabase {
       final percentageForEachDay = <DateTime,int> {
         DateTime(year,month,day):(10*strengthAsPercent).toInt(),
       };
-      print('adding');
       heatMapDataSet.addEntries(percentageForEachDay.entries);
-      print(heatMapDataSet);
     }
   }
 }

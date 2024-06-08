@@ -27,7 +27,7 @@ DateTime createDateTimeObject(String yyyymmdd) {
 }
 
 // convert DatetimeObject to string yyyymmdd
-String ConvertDateTimeToString(DateTime dateTime) {
+String convertDateTimeToString(DateTime dateTime) {
   String year = dateTime.year.toString();
   String month = dateTime.month.toString();
   String day = dateTime.day.toString();

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:habit_tracker/screens/home_screen.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'theme/themes_data.dart';
+import 'screens/home_screen.dart';
 void main() async {
   // initialize hive
   await Hive.initFlutter();
@@ -18,8 +19,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+    debugShowCheckedModeBanner: false,
       home: const HomeScreen(),
-      theme: ThemeData(primarySwatch: Colors.green),
+      theme: lightMode,
+      darkTheme: darkMode,
     );
   }
 }
